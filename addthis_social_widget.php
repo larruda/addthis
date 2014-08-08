@@ -2289,7 +2289,11 @@ function addthis_plugin_options_php4() {
 					<th scope="row"><?php _e("addthis_share values:<br/><span class=\"description\">(json format)</span>", 'addthis_trans_domain' ); ?></th>
 					<td><textarea rows='3' cols='40' type="text" name="addthis_settings[addthis_share_json]" id="addthis-share-json" /><?php echo $addthis_share_json; ?></textarea></td>
 					<td id="share-error" style="display: none;color: red;float: left;margin-top: 25px;width: 150px;">Invalid JSON format</td>
-                </tr>               
+                </tr>
+                <tr valign="top">
+                    <th scope="row"><?php _e("Include JavaScript on page's footer instead of header:", 'addthis_trans_domain' ); ?></th>
+                    <td><input type="checkbox" name="addthis_settings[wpfooter]" value="true" <?php echo ($wpfooter == true ? 'checked="checked"' : ''); ?>/></td>
+                </tr>
 			</table>
 			<div class='clear'>&nbsp;</div>
 		</div>
