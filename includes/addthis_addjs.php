@@ -58,20 +58,7 @@ Class AddThis_addjs{
         $cuid = hash_hmac('md5', $base, 'addthis'); 
         $this->_cuid = $cuid;
 
-        // If the footer option isn't set, check for it
-        if (! isset($this->_options['wpfooter']) && current_user_can('manage_options'))
-        {
-            add_action('admin_init',array($this, 'update_wpfooter'));
-        }
-
         $this->pubid = $this->getProfileId();
-
-        // on theme swich, check for footer again
-        add_action('switch_theme', array($this, 'switch_theme'),15);
-
-        // In order for our wp_footer magic to work, we need to sometimes add our stuff 
-        add_action('init', array($this, 'maybe_add_footer_comment'));
-
 
         // Footer
         if ( isset($this->_options['wpfooter']) && $this->_options['wpfooter'])
@@ -80,12 +67,6 @@ Class AddThis_addjs{
             add_filter('the_content', array($this, 'output_script_filter') );
 
         do_action('addthis_addjs_created');
-    }
-
-    function switch_theme(){
-        $footer = $this->check_for_footer();
-        $this->_options['wpfooter'] = $footer;
-        update_option( 'addthis_settings', $this->_options); 
     }
 
     function output_script(){
@@ -119,34 +100,6 @@ Class AddThis_addjs{
     function wrapJs(){
         $this->jsToAdd .= "var addthis_product = '".$this->productCode."';\n";
         $this->jsToAdd = '<script type="text/javascript">' . $this->jsToAdd . '</script>';
-    }
-
-    /* testing for wp_footer in a theme stuff */
-    function update_wpfooter(){
-        $footer = $this->check_for_footer();
-        $options = $this->_options;
-        $options['wpfooter'] = $footer;
-        update_option( 'addthis_settings', $options); 
-        $this->_options = $options;
-    }
-
-    function check_for_footer(){
-        $url = home_url();
-        $response = wp_remote_get( $url, array( 'sslverify' => false ) );
-        $code = (int) wp_remote_retrieve_response_code( $response );
-            if ( $code == 200 ) {
-                $html = preg_replace( '/[   
-                s]/', '', wp_remote_retrieve_body( $response ) );
-                return (bool)( strstr( $html, '<!--wp_footer-->' ) );
-            }
-    }
-    
-    function maybe_add_footer_comment(){
-            add_action( 'wp_footer', array($this, 'test_footer' ), 99999 ); // Some obscene priority, make sure we run last
-    }
-
-    function test_footer(){
-        echo '<!--wp_footer-->';
     }
     
     /* END testing for wp_footer in a theme stuff */
